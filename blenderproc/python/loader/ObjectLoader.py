@@ -44,7 +44,8 @@ def load_obj(filepath: str, cached_objects: Optional[Dict[str, List[MeshObject]]
         if "validate_meshes" not in kwargs:
             kwargs["validate_meshes"] = False
         # load an .obj file:
-        bpy.ops.wm.obj_import(filepath=filepath, **kwargs)
+        # bpy.ops.wm.obj_import(filepath=filepath, **kwargs)
+        bpy.ops.import_scene.obj(filepath=filepath, use_split_objects=True, use_split_groups=True)
     elif filepath.endswith(".ply"):
         PLY_TEXTURE_FILE_COMMENT = "comment TextureFile "
         model_name = os.path.basename(filepath)

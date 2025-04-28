@@ -365,12 +365,27 @@ class SetupUtility:
                                                            f"--path={packages_import_path}"])
 
             # Split up strings into two lists (names and versions)
-            installed_packages_name, installed_packages_versions = zip(*[str(line).lower().split('==')
-                                                                         for line in installed_packages.splitlines()])
-            installed_packages_name = [ele[2:] if ele.startswith("b'") else ele
-                                       for ele in installed_packages_name]
-            installed_packages_versions = [ele[:-1] if ele.endswith("'") else ele
-                                           for ele in installed_packages_versions]
+            installed_packages_name = []
+            installed_packages_versions = []
+
+            for line in installed_packages.splitlines():
+                parts = str(line).lower().strip().split('==')
+                if len(parts) == 2:
+                    name, version = parts
+                elif len(parts) == 1:
+                    # Line without version, just a name
+                    name, version = parts[0], None
+                else:
+                    # Totally broken line, you can skip or handle it
+                    continue
+
+                if name.startswith("b'"):
+                    name = name[2:]
+                if version and version.endswith("'"):
+                    version = version[:-1]
+
+                installed_packages_name.append(name)
+                installed_packages_versions.append(version)
             SetupUtility.installed_packages = dict(zip(installed_packages_name, installed_packages_versions))
             SetupUtility.package_list_is_from_cache = False
 
